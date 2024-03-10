@@ -1,7 +1,7 @@
 {
   description = "Home Manager and NixOS configuration of JohnRTitor (forked from Aylur)";
 
-  outputs = { home-manager, nixpkgs, ... }@inputs: let
+  outputs = { home-manager, nixpkgs, lanzaboote, ... }@inputs: let
     username = "masum";
     hostname = "Ainz-NIX";
     system = "x86_64-linux";
