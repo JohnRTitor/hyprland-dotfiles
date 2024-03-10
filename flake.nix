@@ -21,12 +21,12 @@
         # Load home manager as a module
         home-manager.nixosModules.home-manager {
           home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
+            # useGlobalPkgs = true;
+            # useUserPackages = true;
 
             # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
             extraSpecialArgs = { inherit inputs username asztal; };
-            users.${username} = import ./home-manager/home.nix;
+            users.${username} = lib.mkDefault import ./home-manager/home.nix;
           };
         }
       ];
