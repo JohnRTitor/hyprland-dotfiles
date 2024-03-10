@@ -1,36 +1,27 @@
-{ config, ... }: {
-  # asusctl
-  services.asusd = {
-    enable = true;
-    enableUserService = true;
-  };
+{ config, ... }:
+{
 
-  # nvidia
+  # Enable OpenGL
   hardware.opengl = {
-    enable = true;
-    driSupport = true;
+	  enable = true; # Mesa
+	  driSupport = true; # Vulkan
     driSupport32Bit = true;
+    # Extra drivers
+    extraPackages = with pkgs; [
+      rocmPackages.clr.icd
+      amdvlk
+      vaapiVdpau
+      libvdpau-va-gl
+    ];
+    # For 32 bit applications 
+    extraPackages32 = with pkgs; [
+      driversi686Linux.amdvlk
+      libva
+    ];
   };
 
-  services.xserver.videoDrivers = ["nvidia"];
+  # AMDGPU driver
+  services.xserver.videoDrivers = ["amdgpu"];
 
-  hardware.nvidia = {
-    prime = {
-      offload.enable = true;
-      offload.enableOffloadCmd = true;
-      nvidiaBusId = "PCI:1:0:0";
-      amdgpuBusId = "PCI:6:0:0";
-    };
 
-    modesetting.enable = true;
-
-    powerManagement = {
-      enable = true;
-      finegrained = true;
-    };
-
-    open = true;
-    nvidiaSettings = false; # gui app
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-  };
 }

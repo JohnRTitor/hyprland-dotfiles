@@ -1,9 +1,9 @@
 {
-  description = "Home Manager and NixOS configuration of Aylur";
+  description = "Home Manager and NixOS configuration of JohnRTitor (forked from Aylur)";
 
   outputs = { home-manager, nixpkgs, ... }@inputs: let
-    username = "demeter";
-    hostname = "nixos";
+    username = "masum";
+    hostname = "Ainz-NIX";
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
@@ -14,13 +14,22 @@
     nixosConfigurations.${hostname} = nixpkgs.lib.nixosSystem {
       inherit system;
       specialArgs = { inherit inputs username hostname asztal; };
-      modules = [ ./nixos/configuration.nix ];
-    };
+      modules = [
+        ./nixos/configuration.nix # main nix configuration        
+        lanzaboote.nixosModules.lanzaboote # lanzaboote for secureboot
 
-    homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
-      inherit pkgs;
-      extraSpecialArgs = { inherit inputs username asztal; };
-      modules = [ ./home-manager/home.nix ];
+        # Load home manager as a module
+        home-manager.nixosModules.home-manager {
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+
+            # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
+            extraSpecialArgs = { inherit inputs username asztal; };
+            users.${username} = import ./home-manager/home.nix;
+          };
+        }
+      ];
     };
 
     packages.${system}.default = asztal;
@@ -50,5 +59,7 @@
       url = "github:rafaelmardojai/firefox-gnome-theme";
       flake = false;
     };
+    # Lanzaboot, for secureboot
+    lanzaboote.url = "github:nix-community/lanzaboote";
   };
 }

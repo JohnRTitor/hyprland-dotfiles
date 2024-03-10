@@ -1,7 +1,7 @@
 { pkgs, username, hostname, ... }: {
 
   imports = [
-    /etc/nixos/hardware-configuration.nix
+    ./hardware-configuration.nix
     ./audio.nix
     ./locale.nix
     # ./gnome.nix
@@ -35,6 +35,7 @@
     neovim
     git
     wget
+    google-chrome
   ];
 
   # services
@@ -45,6 +46,7 @@
     };
     printing.enable = true;
     flatpak.enable = true;
+    fwupd.enable = true;
   };
 
   # logind
@@ -89,11 +91,11 @@
 
   # bootloader
   boot = {
-    tmp.cleanOnBoot = true;
-    supportedFilesystems = [ "ntfs" ];
+    supportedFilesystems = [ "bcachefs" ];
     loader = {
-      timeout = 2;
-      systemd-boot.enable = true;
+      timeout = 30;
+      # disable systemd in favor of lanzaboote
+      systemd-boot.enable = pkgs.lib.mkForce false;
       efi.canTouchEfiVariables = true;
     };
     plymouth = rec {
@@ -108,6 +110,13 @@
       )];
     };
   };
+  # lanzaboote for secureboot
+  boot.lanzaboote = {
+    enable = true;
+    pkiBundle = "/etc/secureboot";
+  };
+  # latest xanmod kernel
+  boot.kernelPackages = pkgs.linuxPackages_xanmod_latest;
 
-  system.stateVersion = "23.05";
+  system.stateVersion = "24.05";
 }
