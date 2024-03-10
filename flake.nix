@@ -26,7 +26,7 @@
 
             # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
             extraSpecialArgs = { inherit inputs username asztal; };
-            users.${username} = lib.mkDefault import ./home-manager/home.nix;
+            users.${username} = nixpkgs.lib.mkDefault import ./home-manager/home.nix;
           };
         }
       ];
