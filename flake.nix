@@ -17,20 +17,14 @@
       modules = [
         ./nixos/configuration.nix # main nix configuration        
         lanzaboote.nixosModules.lanzaboote # lanzaboote for secureboot
-
-        # Load home manager as a module
-        home-manager.nixosModules.home-manager {
-          home-manager = {
-            # useGlobalPkgs = true;
-            # useUserPackages = true;
-
-            # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
-            extraSpecialArgs = { inherit inputs username asztal; };
-            users.${username} = nixpkgs.lib.mkDefault import ./home-manager/home.nix;
-          };
-        }
       ];
     };
+    homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      extraSpecialArgs = { inherit inputs username asztal; };
+      modules = [ ./home-manager/home.nix ];
+    };
+
 
     packages.${system}.default = asztal;
   };
